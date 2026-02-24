@@ -6,7 +6,7 @@
 
 ### Git
 
-- Интерактивный курс по гиту [тык](https://learngitbranching.js.org/?locale=ru_RU)
+- Интерактивный курс по гиту: https://learngitbranching.js.org/?locale=ru_RU
 
 ### Алгоритмы и структуры данных
 
