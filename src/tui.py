@@ -1,4 +1,4 @@
-from src.db.backend.memory import JsonDatabase, CsvDatabase
+from src.db.backend.file import JsonDatabase, CsvDatabase
 
 class ConsoleInterface:
     def __init__(self):
