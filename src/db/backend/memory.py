@@ -26,6 +26,18 @@ class InMemoryDatabase:
                 return True
         return False
 
+    def update_game(self, game_id: int, title: str, genre: str, year: int, studio_id: int) -> bool:
+        if not title or not genre or not (1950 <= year <= 2026) or studio_id <= 0:
+            return False
+        for g in self.games:
+            if g.id == game_id:
+                g.title = title
+                g.genre = genre
+                g.year = year
+                g.studio_id = studio_id
+                return True
+        return False
+
     def get_games(self, title=None, genre=None, year=None):
         filtered = self.games
         if title:

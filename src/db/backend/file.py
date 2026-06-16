@@ -51,6 +51,12 @@ class JsonDatabase(InMemoryDatabase):
             self.save()
         return success
 
+    def update_game(self, game_id, title, genre, year, studio_id) -> bool:
+        success = super().update_game(game_id, title, genre, year, studio_id)
+        if success:
+            self.save()  # Перезаписываем JSON файл при успешном обновлении
+        return success
+
 
 class CsvDatabase(InMemoryDatabase):
     def __init__(self, filename: str):
@@ -99,4 +105,10 @@ class CsvDatabase(InMemoryDatabase):
         success = super().delete_game(game_id)
         if success:
             self.save()
+        return success
+
+    def update_game(self, game_id, title, genre, year, studio_id) -> bool:
+        success = super().update_game(game_id, title, genre, year, studio_id)
+        if success:
+            self.save()  # Перезаписываем CSV файл при успешном обновлении
         return success

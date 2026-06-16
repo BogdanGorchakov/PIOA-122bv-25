@@ -18,8 +18,9 @@ class ConsoleInterface:
             print("2. Показать все игры")
             print("3. Поиск и фильтрация")
             print("4. Удалить игру")
-            print("5. Выйти")
-            choice = input("Выберите действие (1-5): ").strip()
+            print("5. Обновить данные игры")
+            print("6. Выйти")
+            choice = input("Выберите действие (1-6): ").strip()
 
             if choice == "1":
                 t = input("Название: ").strip()
@@ -55,6 +56,19 @@ class ConsoleInterface:
                 except ValueError:
                     print("Введите числовой ID!")
             elif choice == "5":
+                try:
+                    idx = int(input("ID игры для обновления: "))
+                    t = input("Новое название: ").strip()
+                    g = input("Новый жанр: ").strip()
+                    y = int(input("Новый год: "))
+                    s = int(input("Новый ID студии: "))
+                    if self.db.update_game(idx, t, g, y, s):
+                        print("Данные игры успешно обновлены!")
+                    else:
+                        print("Ошибка обновления! Проверьте ID и валидность данных.")
+                except ValueError:
+                    print("Ошибка ввода чисел!")
+            elif choice == "6":
                 print("Выход.")
                 break
 

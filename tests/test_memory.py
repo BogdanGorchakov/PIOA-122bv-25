@@ -37,3 +37,11 @@ def test_get_games_filtering():
 
     gta_games = db.get_games(title="gta")
     assert len(gta_games) == 1
+
+def test_update_game():
+    db = InMemoryDatabase()
+    db.add_game("Old Title", "Action", 2010, 1)
+    assert db.update_game(1, "New Title", "RPG", 2015, 2) is True
+    assert db.games[0].title == "New Title"
+    assert db.games[0].genre == "RPG"
+    assert db.update_game(999, "No Game", "Classic", 2020, 1) is False
