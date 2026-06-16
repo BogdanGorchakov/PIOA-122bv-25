@@ -1,4 +1,4 @@
-from src.interface import ConsoleInterface
+from src.tui import ConsoleInterface
 
 if __name__ == "__main__":
     ui = ConsoleInterface()
