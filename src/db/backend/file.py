@@ -54,7 +54,7 @@ class JsonDatabase(InMemoryDatabase):
     def update_game(self, game_id, title, genre, year, studio_id) -> bool:
         success = super().update_game(game_id, title, genre, year, studio_id)
         if success:
-            self.save()  # Перезаписываем JSON файл при успешном обновлении
+            self.save()
         return success
 
 
@@ -110,5 +110,5 @@ class CsvDatabase(InMemoryDatabase):
     def update_game(self, game_id, title, genre, year, studio_id) -> bool:
         success = super().update_game(game_id, title, genre, year, studio_id)
         if success:
-            self.save()  # Перезаписываем CSV файл при успешном обновлении
+            self.save()
         return success
