@@ -1,15 +1,41 @@
+from src.db.backend.memory import InMemoryDatabase
 from src.db.backend.file import JsonDatabase, CsvDatabase
+from src.db.backend.errors import DatabaseError
+
 
 class ConsoleInterface:
     def __init__(self):
-        print("Выберите формат хранения: 1 - JSON, 2 - CSV")
-        choice = input("Выбор: ").strip()
-        if choice == "2":
-            self.db = CsvDatabase("database.csv")
-            print("Запущена СУБД (Формат: CSV)")
-        else:
-            self.db = JsonDatabase("database.json")
-            print("Запущена СУБД (Формат: JSON)")
+        while True:
+            print("Выберите режим работы СУБД:")
+            print("1 - В оперативной памяти (In-Memory)")
+            print("2 - Файл JSON")
+            print("3 - Файл CSV")
+            choice = input("Ваш выбор: ").strip()
+
+            if choice == "1":
+                self.db = InMemoryDatabase()
+                print("Запущена СУБД (Режим: In-Memory)")
+                break
+            elif choice == "2":
+                self.db = JsonDatabase("database.json")
+                print("Запущена СУБД (Формат: JSON)")
+                break
+            elif choice == "3":
+                self.db = CsvDatabase("database.csv")
+                print("Запущена СУБД (Формат: CSV)")
+                break
+            else:
+                print("Неверный выбор. Пожалуйста, введите 1, 2 или 3.\n")
+
+    def _input_int(self, prompt: str, allow_empty: bool = False):
+        while True:
+            raw = input(prompt).strip()
+            if allow_empty and not raw:
+                return None
+            try:
+                return int(raw)
+            except ValueError:
+                print("Ошибка: значение должно быть целым числом. Попробуйте снова.")
 
     def run(self):
         while True:
@@ -25,52 +51,58 @@ class ConsoleInterface:
             if choice == "1":
                 t = input("Название: ").strip()
                 g = input("Жанр: ").strip()
+                y = self._input_int("Год: ")
+                s = self._input_int("ID студии: ")
                 try:
-                    y = int(input("Год: "))
-                    s = int(input("ID студии: "))
                     if self.db.add_game(t, g, y, s):
                         print("Игра успешно сохранена!")
                     else:
-                        print("Ошибка валидации данных!")
-                except ValueError:
-                    print("Ошибка: Год и ID должны быть числами!")
+                        print("Ошибка валидации данных! Проверьте корректность полей.")
+                except (DatabaseError, OSError) as e:
+                    print(f"Ошибка сохранения: {e}")
+
             elif choice == "2":
                 games = self.db.get_games()
                 self._print_list(games)
+
             elif choice == "3":
                 print("\n--- Фильтрация (Оставьте пустым, если фильтр не нужен) ---")
                 st = input("Поиск по названию: ").strip() or None
                 sg = input("Поиск по жанру: ").strip() or None
-                sy_raw = input("Поиск по году: ").strip()
-                sy = int(sy_raw) if sy_raw.isdigit() else None
+                sy = self._input_int("Поиск по году: ", allow_empty=True)
 
                 games = self.db.get_games(title=st, genre=sg, year=sy)
                 self._print_list(games)
+
             elif choice == "4":
+                idx = self._input_int("ID для удаления: ")
                 try:
-                    idx = int(input("ID для удаления: "))
                     if self.db.delete_game(idx):
                         print("Игра удалена!")
                     else:
                         print("Игра не найдена!")
-                except ValueError:
-                    print("Введите числовой ID!")
+                except (DatabaseError, OSError) as e:
+                    print(f"Ошибка сохранения: {e}")
+
             elif choice == "5":
+                idx = self._input_int("ID игры для обновления: ")
+                t = input("Новое название: ").strip()
+                g = input("Новый жанр: ").strip()
+                y = self._input_int("Новый год: ")
+                s = self._input_int("Новый ID студии: ")
                 try:
-                    idx = int(input("ID игры для обновления: "))
-                    t = input("Новое название: ").strip()
-                    g = input("Новый жанр: ").strip()
-                    y = int(input("Новый год: "))
-                    s = int(input("Новый ID студии: "))
                     if self.db.update_game(idx, t, g, y, s):
                         print("Данные игры успешно обновлены!")
                     else:
                         print("Ошибка обновления! Проверьте ID и валидность данных.")
-                except ValueError:
-                    print("Ошибка ввода чисел!")
+                except (DatabaseError, OSError) as e:
+                    print(f"Ошибка сохранения: {e}")
+
             elif choice == "6":
                 print("Выход.")
                 break
+            else:
+                print("Неизвестный пункт меню. Попробуйте снова.")
 
     def _print_list(self, games):
         if not games:
